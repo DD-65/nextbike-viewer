@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live-Übersicht freie Nextbikes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="overview" aria-labelledby="page-title">
+        <div class="copy">
+          <h1 id="page-title">Freie Nextbikes in KL</h1>
+          <p class="lede">Live Infos via API</p>
+        </div>
+
+        <div class="status-panel">
+          <div class="status-visual">
+            <div id="stationMap" class="station-map" role="img" aria-label="OpenStreetMap view of the selected stations"></div>
+          </div>
+          <div aria-live="polite">
+            <span class="status-label">Status</span>
+            <strong id="statusText">Live-Daten werden geladen...</strong>
+            <span id="updatedAt">Anfrage läuft...</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="station-board" aria-label="Station bike availability">
+        <div class="board-heading">
+          <h2>Stationen</h2>
+          <button id="refreshButton" type="button" class="refresh-button" aria-label="Refresh data">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 12a8 8 0 0 1-14.8 4.2M4 12A8 8 0 0 1 18.8 7.8M18.5 3.5v4.8h-4.8M5.5 20.5v-4.8h4.8" />
+            </svg>
+          </button>
+        </div>
+
+        <div id="stations" class="stations" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <template id="stationTemplate">
+      <article class="station-card">
+        <div class="station-meta">
+          <span class="station-dot" aria-hidden="true"></span>
+          <h3></h3>
+        </div>
+        <div class="bike-count">
+          <strong></strong>
+          <span>verfügbare Nextbikes</span>
+        </div>
+      </article>
+    </template>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
