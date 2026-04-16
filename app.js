@@ -173,11 +173,11 @@ async function loadAvailability() {
     renderStations(stations);
     renderMap(stations);
     statusText.textContent = "Live-Daten geladen";
-    updatedAt.textContent = `Aktualisiert ${new Intl.DateTimeFormat(undefined, {
+    updatedAt.textContent = `Zuletzt aktualisiert um ${new Intl.DateTimeFormat(undefined, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-    }).format(new Date())}`;
+    }).format(new Date())} Uhr`;
   } catch (error) {
     statusText.textContent = "Konnte Daten nicht laden";
     updatedAt.textContent = "Versuchen Sie es in einem Moment erneut.";
