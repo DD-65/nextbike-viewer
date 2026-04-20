@@ -1,13 +1,4 @@
-const API_URL =
-  "https://maps.nextbike.net/maps/nextbike-live.json?lat=49.42457453273227&lng=7.751905004682108&distance=3000";
-
-const STATIONS = [
-  { apiName: "TUK Mensa" },
-  { apiName: "TUK - Innenhof Gebäude 47" },
-  { apiName: "Trippstadter Straße / Institute", displayName: "Institut" },
-  { apiName: "Davenportplatz" },
-  { apiName: "Pfaffplatz" },
-];
+const API_URL = "/api/availability";
 
 const stationsEl = document.querySelector("#stations");
 const stationTemplate = document.querySelector("#stationTemplate");
@@ -18,12 +9,6 @@ const updatedAt = document.querySelector("#updatedAt");
 
 let stationMap;
 let stationLayer;
-
-function flattenPlaces(payload) {
-  return payload.countries.flatMap((country) =>
-    country.cities.flatMap((city) => city.places),
-  );
-}
 
 function availabilityClass(count) {
   if (count <= 1) return "low";
@@ -140,6 +125,14 @@ function renderError(message) {
   stationsEl.replaceChildren(error);
 }
 
+function parseAvailability(payload) {
+  if (!Array.isArray(payload.stations)) {
+    throw new Error("API response did not include stations");
+  }
+
+  return payload.stations;
+}
+
 async function loadAvailability() {
   refreshButton.disabled = true;
   statusText.textContent = "Live-Daten werden geladen...";
@@ -152,32 +145,21 @@ async function loadAvailability() {
     });
 
     if (!response.ok) {
-      throw new Error(`Nextbike returned ${response.status}`);
+      throw new Error(`API returned ${response.status}`);
     }
 
     const payload = await response.json();
-    const places = flattenPlaces(payload);
-    const stations = STATIONS.map(({ apiName, displayName }) => {
-      const station = places.find((place) => place.name.trim() === apiName);
-      return station ? { ...station, displayName } : null;
-    }).filter(Boolean);
-
-    if (stations.length !== STATIONS.length) {
-      const foundNames = new Set(stations.map((station) => station.name.trim()));
-      const missingNames = STATIONS.map(({ apiName }) => apiName).filter(
-        (name) => !foundNames.has(name),
-      );
-      throw new Error(`Missing station data for ${missingNames.join(", ")}`);
-    }
+    const stations = parseAvailability(payload);
 
     renderStations(stations);
     renderMap(stations);
     statusText.textContent = "Live-Daten geladen";
+    const updateDate = payload.updatedAt ? new Date(payload.updatedAt) : new Date();
     updatedAt.textContent = `Zuletzt aktualisiert um ${new Intl.DateTimeFormat(undefined, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-    }).format(new Date())} Uhr`;
+    }).format(updateDate)} Uhr`;
   } catch (error) {
     statusText.textContent = "Konnte Daten nicht laden";
     updatedAt.textContent = "Versuchen Sie es in einem Moment erneut.";
