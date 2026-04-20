@@ -2,7 +2,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const HOST = "127.0.0.1";
+const HOST = "0.0.0.0";
 const PORT = 5729;
 const PUBLIC_DIR = __dirname;
 const API_PATHS = new Set(["/api/availability", "/api/stations"]);
